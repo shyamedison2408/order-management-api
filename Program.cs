@@ -5,6 +5,7 @@ using OrderManagementApi.Data;
 using OrderManagementApi.Middleware;
 using OrderManagementApi.Repositories;
 using OrderManagementApi.Services;
+using StackExchange.Redis;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,11 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging()
         .LogTo(Console.WriteLine, LogLevel.Information));
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect(
+        builder.Configuration.GetConnectionString("Redis")!));
+
+builder.Services.AddSingleton<RedisService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();

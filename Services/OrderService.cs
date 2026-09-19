@@ -8,10 +8,13 @@ namespace OrderManagementApi.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _repository;
+    private readonly RedisService _redisService;
 
-    public OrderService(IOrderRepository repository)
+
+    public OrderService(IOrderRepository repository, RedisService redisService)
     {
         _repository = repository;
+        _redisService = redisService;
     }
 
     public async Task<Order> CreateAsync(CreateOrderRequestDto order)
@@ -48,8 +51,15 @@ public class OrderService : IOrderService
             throw new DbUpdateConcurrencyException(
                 "The order has been modified by another process.");
         }
-    
-        return await _repository.DeleteAsync(order);
+
+        var deleted = await _repository.DeleteAsync(order);
+
+        if (deleted)
+        {
+            await _redisService.DeleteAsync($"order:{id}");
+        }
+
+        return deleted;
     }
 
     public async Task<OrderResponseDto?> GetOrderByIdAsync(int id)
@@ -58,7 +68,27 @@ public class OrderService : IOrderService
         {
             throw new ArgumentException("Invalid order ID.");
         }
-        return await _repository.GetOrderByIdAsync(id);
+
+        var cacheKey = $"order:{id}";
+
+        var cachedOrder = await _redisService.GetAsync(cacheKey);
+
+        if (cachedOrder is not null)
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<OrderResponseDto>(cachedOrder);
+        }
+
+        var order = await _repository.GetOrderByIdAsync(id);
+
+        if (order is null)
+        {
+            return null;
+        }
+
+        var serializedOrder = System.Text.Json.JsonSerializer.Serialize(order);
+
+        await _redisService.SetAsync(cacheKey, serializedOrder, TimeSpan.FromMinutes(5));
+
+        return order;
     }
 }
- 
