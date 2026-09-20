@@ -8,10 +8,10 @@ namespace OrderManagementApi.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _repository;
-    private readonly RedisService _redisService;
+    private readonly IRedisService _redisService;
 
 
-    public OrderService(IOrderRepository repository, RedisService redisService)
+    public OrderService(IOrderRepository repository, IRedisService redisService)
     {
         _repository = repository;
         _redisService = redisService;

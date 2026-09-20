@@ -18,6 +18,7 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
 
         var expectedOrder = new OrderResponseDto
         {
@@ -33,7 +34,7 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderByIdAsync(1))
             .ReturnsAsync(expectedOrder);
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         var result = await service.GetOrderByIdAsync(1);
@@ -59,7 +60,8 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderByIdAsync(999))
             .ReturnsAsync((OrderResponseDto?)null);
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         var result = await service.GetOrderByIdAsync(999);
@@ -74,7 +76,8 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(
@@ -118,7 +121,8 @@ public class OrderServiceTests
             .Setup(r => r.CreateAsync(request))
             .ReturnsAsync(expectedOrder);
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         var result = await service.CreateAsync(request);
@@ -151,7 +155,8 @@ public class OrderServiceTests
             Price = 50000
         };
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -181,7 +186,8 @@ public class OrderServiceTests
             Price = 50000
         };
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -211,7 +217,8 @@ public class OrderServiceTests
             Price = 0
         };
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -241,7 +248,8 @@ public class OrderServiceTests
             Price = -500
         };
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -266,6 +274,8 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
+
 
         var order = new Order
         {
@@ -285,7 +295,7 @@ public class OrderServiceTests
             .Setup(r => r.DeleteAsync(order))
             .ReturnsAsync(true);
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         var result = await service.DeleteAsync(1, 1);
@@ -313,7 +323,8 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderEntityByIdAsync(999))
             .ReturnsAsync((Order?)null);
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         var result = await service.DeleteAsync(999, 1);
@@ -332,8 +343,9 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -358,6 +370,7 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
 
         var order = new Order
         {
@@ -375,7 +388,7 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderEntityByIdAsync(1))
             .ReturnsAsync(order);
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(
@@ -388,6 +401,7 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
 
         var order = new Order
         {
@@ -407,7 +421,7 @@ public class OrderServiceTests
             .Setup(r => r.DeleteAsync(order))
             .ReturnsAsync(true);
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         await service.DeleteAsync(1, 5);
@@ -441,7 +455,8 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderEntityByIdAsync(1))
             .ReturnsAsync(order);
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(
@@ -484,7 +499,8 @@ public class OrderServiceTests
                 Version = 1
             });
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         await service.CreateAsync(request);
@@ -514,7 +530,8 @@ public class OrderServiceTests
                 Version = 1
             });
 
-        var service = new OrderService(mockRepository.Object);
+        var mockRedis = new Mock<IRedisService>();
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act
         await service.GetOrderByIdAsync(1);
@@ -531,6 +548,7 @@ public class OrderServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IOrderRepository>();
+        var mockRedis = new Mock<IRedisService>();
 
         var order = new Order
         {
@@ -546,7 +564,7 @@ public class OrderServiceTests
             .Setup(r => r.GetOrderEntityByIdAsync(1))
             .ReturnsAsync(order);
 
-        var service = new OrderService(mockRepository.Object);
+        var service = new OrderService(mockRepository.Object, mockRedis.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(

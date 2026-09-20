@@ -2,7 +2,7 @@ using StackExchange.Redis;
 
 namespace OrderManagementApi.Services;
 
-public class RedisService
+public class RedisService :IRedisService
 {
     private readonly IDatabase _database;
 
