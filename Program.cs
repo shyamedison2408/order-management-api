@@ -15,15 +15,11 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging()
         .LogTo(Console.WriteLine, LogLevel.Information));
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-        ConnectionMultiplexer.Connect(
-            builder.Configuration.GetConnectionString("Redis")!));
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect(
+        builder.Configuration.GetConnectionString("Redis")!));
 
-    builder.Services.AddSingleton<IRedisService, RedisService>();
-}
-
+builder.Services.AddSingleton<IRedisService, RedisService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
